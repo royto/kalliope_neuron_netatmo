@@ -1,0 +1,12 @@
+---
+  name: "Netatmo"
+  type: "neuron"
+  author: "https://github.com/royto/"
+
+  kalliope_supported_version:
+    - 0.5
+
+  tags:
+    - "Netatmo"
+    - "energy"
+    - "thermostat"   
