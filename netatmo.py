@@ -18,7 +18,18 @@ _HOME_DATA = _BASE_URL + "api/homesdata"
 _SET_ROOM_THERMPOINT = _BASE_URL + "api/setroomthermpoint"
 _SWITCH_HOME_SCHEDULE = _BASE_URL + "api/switchhomeschedule"
 
+_WEATHER_GET_STATION_DATA = _BASE_URL + "/api/getstationsdata"
+
 THERMMODE = ("schedule", "away", "hg")
+
+ACTIONS_UNIVERSE = {
+    "GET_STATUS": "ENERGY",
+    "SET_TEMP": "ENERGY",
+    "CANCEL_SET_TEMP": "ENERGY",
+    "CHANGE_MODE": "ENERGY",
+    "SWITCH_SCHEDULE": "ENERGY",
+    "WEATHER_DATA": "WEATHER"
+}
 
 class Netatmo(NeuronModule):
 
@@ -41,13 +52,14 @@ class Netatmo(NeuronModule):
         self.thermMode = kwargs.get('thermoMode', None)
         self.temp = kwargs.get('temperature', None)
         self.scheduleId = kwargs.get('scheduleId', None)
+        self.weather_deviceId = kwargs.get('deviceId', None)
 
         logger.debug("Netatmo launch %s", self.username)
 
         # check parameters
         if self._is_parameters_ok():
 
-            scope="read_thermostat write_thermostat" 
+            scope="read_thermostat write_thermostat read_station" 
             payload = {
                 "grant_type" : "password",
                 "client_id" : self.clientId,
@@ -77,6 +89,8 @@ class Netatmo(NeuronModule):
                 self.changeMode()
             elif self.action == "SWITCH_SCHEDULE":
                 self.switchSchedule()
+            elif self.action == "WEATHER_DATA":
+                self.getWeatherData()
 
     def changeMode(self):
         #thermMode schedule / away / hg
@@ -157,7 +171,6 @@ class Netatmo(NeuronModule):
         response = requests.post(_SET_ROOM_THERMPOINT, headers=headers, params=params)
 
         result = dict()
-        logger.debug(response.json())
         result["ok"] = response.json()["status"]
         self.say(result)
         
@@ -168,6 +181,37 @@ class Netatmo(NeuronModule):
         }
         headers = self.getAuthorizedHeader()
         response = requests.post(_SWITCH_HOME_SCHEDULE, headers=headers, params=params)
+
+    def getWeatherData(self):
+        headers = self.getAuthorizedHeader()
+        params = {
+            "device_id": self.weather_deviceId
+        }
+
+        response = requests.get(_WEATHER_GET_STATION_DATA, headers=headers, params=params)
+
+        content = response.json()
+        weather_data = content["body"]["devices"][0]
+        self.say(weather_data) #TODO Improve that
+        result = dict()
+        
+        #TODO use date_type to fill result 
+        dashboard_data = weather_data["dashboard_data"]
+        result["time_utc"] = dashboard_data["time_utc"]
+        result["Temperature"] = dashboard_data["Temperature"]
+        result["CO2"] = dashboard_data["CO2"]
+        result["Humidity"] = dashboard_data["Humidity"]
+        result["Noise"] = dashboard_data["Noise"]
+        result["Pressure"] = dashboard_data["Pressure"]
+        result["AbsolutePressure"] = dashboard_data["AbsolutePressure"]
+        result["min_temp"] = dashboard_data["min_temp"]
+        result["max_temp"] = dashboard_data["max_temp"]
+        result["date_min_temp"] = dashboard_data["date_min_temp"]
+        result["date_max_temp"] = dashboard_data["date_max_temp"]
+        result["temp_trend"] = dashboard_data["temp_trend"]
+        result["pressure_trend"] = dashboard_data["pressure_trend"]
+
+        self.say(result)
 
     def getAuthorizedHeader(self): 
         return {
@@ -202,8 +246,10 @@ class Netatmo(NeuronModule):
         if self.clientSecret is None:
             raise MissingParameterException("Netatmo needs a clientSecret")
         if self.action is None:
-            raise MissingParameterException("Netatmo needs an action")    
-        if self.homeId is None:
+            raise MissingParameterException("Netatmo needs an action")
+        if self.action not in ACTIONS_UNIVERSE:
+            raise InvalidParameterException("Invalid action")
+        if ACTIONS_UNIVERSE[self.action] == "ENERGY":
             raise MissingParameterException("Netatmo needs a homeId")    
         return True
 
