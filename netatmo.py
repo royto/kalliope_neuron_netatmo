@@ -31,6 +31,14 @@ ACTIONS_UNIVERSE = {
     "WEATHER_DATA": "WEATHER"
 }
 
+WEATHER_DATA_TYPE = [
+    "Temperature",
+    "CO2",
+    "Humidity",
+    "Noise",
+    "Pressure"
+]
+
 class Netatmo(NeuronModule):
 
     """
@@ -192,24 +200,13 @@ class Netatmo(NeuronModule):
 
         content = response.json()
         weather_data = content["body"]["devices"][0]
-        self.say(weather_data) #TODO Improve that
-        result = dict()
-        
-        #TODO use date_type to fill result 
-        dashboard_data = weather_data["dashboard_data"]
-        result["time_utc"] = dashboard_data["time_utc"]
-        result["Temperature"] = dashboard_data["Temperature"]
-        result["CO2"] = dashboard_data["CO2"]
-        result["Humidity"] = dashboard_data["Humidity"]
-        result["Noise"] = dashboard_data["Noise"]
-        result["Pressure"] = dashboard_data["Pressure"]
-        result["AbsolutePressure"] = dashboard_data["AbsolutePressure"]
-        result["min_temp"] = dashboard_data["min_temp"]
-        result["max_temp"] = dashboard_data["max_temp"]
-        result["date_min_temp"] = dashboard_data["date_min_temp"]
-        result["date_max_temp"] = dashboard_data["date_max_temp"]
-        result["temp_trend"] = dashboard_data["temp_trend"]
-        result["pressure_trend"] = dashboard_data["pressure_trend"]
+
+        result = self._get_weather_data(weather_data)
+
+        #Modules info
+        for module in weather_data["modules"]:
+           module_name = module["module_name"]
+           result[module_name] = self._get_weather_data(module)
 
         self.say(result)
 
@@ -217,6 +214,30 @@ class Netatmo(NeuronModule):
         return {
             "Authorization" :  "Bearer " + self._accessToken
         }
+
+    def _get_weather_data(self, data):
+        result = dict()
+        dashboard_data = data["dashboard_data"]
+        result["time_utc"] = dashboard_data["time_utc"]
+        if "Temperature" in data["data_type"]:
+            result["Temperature"] = dashboard_data["Temperature"]
+            result["min_temp"] = dashboard_data["min_temp"]
+            result["max_temp"] = dashboard_data["max_temp"]
+            result["date_min_temp"] = dashboard_data["date_min_temp"]
+            result["date_max_temp"] = dashboard_data["date_max_temp"]
+            result["temp_trend"] = dashboard_data["temp_trend"]
+        if "CO2" in data["data_type"]:
+            result["CO2"] = dashboard_data["CO2"]
+        if "Humidity" in data["data_type"]:
+            result["Humidity"] = dashboard_data["Humidity"]
+        if "Noise" in data["data_type"]:
+            result["Noise"] = dashboard_data["Noise"]
+        if "Pressure" in data["data_type"]:
+            result["Pressure"] = dashboard_data["Pressure"]
+            result["AbsolutePressure"] = dashboard_data["AbsolutePressure"]
+            result["pressure_trend"] = dashboard_data["pressure_trend"]
+
+        return result
 
     def _find_room_name_by_id(self, homeData, roomId):
         room = next((room for room in homeData["rooms"] if room["id"].lower() == roomId.lower()), None)
