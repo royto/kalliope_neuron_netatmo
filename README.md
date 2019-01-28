@@ -231,3 +231,13 @@ Here how to get the needed values to use the energy API
 - homeId: `body.homes[homeIndex].id`
 - roomId: `body.homes[homeIndex].romms[roomIndex].id`
 - homeId: `body.homes[homeIndex].shedules[scheduleIndex].id`
+
+## Getting Weather Station Device id
+
+Go to the weather app on the [netatmo portal](https://my.netatmo.com/app/weather)
+
+Click on the settings button.
+
+Scroll to MAC Address
+
+![weather device id](Img/WeatherStationDeviceId.png)
