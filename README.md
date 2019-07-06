@@ -102,7 +102,7 @@ The template defined in the templates/home_status.j2
 ```jinja2
 {% for room in rooms %}
     {{ room['name'] }} is at {{ room['currentTemp'] }} celcius degree.
-    Wnated tempetaure is {{ room['wantedTemp'] }}.
+    Wanted tempetaure is {{ room['wantedTemp'] }}.
 {% endfor %}
 ```
 
