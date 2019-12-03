@@ -240,12 +240,19 @@ Wheather info.
 
 Each Modules contains info depending of its type.
 
+Each module contains the common data
+
+| Name    | Description                                                          | Type   | sample        |
+|---------|----------------------------------------------------------------------|--------|---------------|
+| time_utc | UTC time of the measurement | String | stable |
+| battery_percent | Percentage of battery remaining | Number | 66 |
+
 #### Synapses example
 
 ``` yml
   - name: "netatmo-weather"
     signals:
-      - order: "Température dans la maison"
+      - order: "What is the temperature in the house ?"
     neurons:
       - netatmo:
           clientId: "XXX"
@@ -254,7 +261,7 @@ Each Modules contains info depending of its type.
           password: "XXXX"
           action: "WEATHER_DATA"
           deviceId: '70:ee:00:00:00:00'
-          say_template: "La température est de {{Temperature}}"
+          say_template: "température is {{Temperature}}"
 ```
 
 ## Getting the Netatmo developper id
