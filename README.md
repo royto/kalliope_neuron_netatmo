@@ -3,7 +3,7 @@
 ## Synopsis
 
 This neuron allows to control your netatmo devices.
-*Only energy devices are currently supported*
+*Only energy and weather devices are currently supported*
 
 You'll need a netatmo account and developer id to use the module.
 See Getting the Netatmo developper id on how to do it.
@@ -175,7 +175,7 @@ No value returned.
 
 ## SWITCH_SCHEDULE
 
-ALlows to switch the selected scheduled.
+Allows to switch the selected scheduled.
 
 ### Options
 
@@ -204,6 +204,57 @@ No value returned.
           homeId: "XXXX"
           scheduleId: "XXX"
           say_template: "Scheduled changed"
+```
+
+## WEATHER_DATA
+
+Get Weather data from wheather station
+
+### Options
+
+| parameter   | required | type   | default | choices    | comment                              |
+|-------------|----------|--------|---------|------------|--------------------------------------|
+| deviceId    | YES      | String | None    |            | id of the weather station      |
+
+#### Return Values
+
+Wheather info.
+
+| Name    | Description                                                          | Type   | sample        |
+|---------|----------------------------------------------------------------------|--------|---------------|
+| Temperature | Temperature of the indoor module | Number | 22 |
+| min_temp | Min Temperature of the indoor module | Number | 22 |
+| date_min_temp | Date of the Min Temperature of the indoor module | Number | 22 |
+| max_temp | Max Temperature of the indoor module | Number | 22 |
+| date_max_temp | Date of the Max Temperature of the indoor module | Number | 22 |
+| CO2 | CO2 of the indoor module | Number | 560 |
+| Humidity | Humidity of the indoor module | Number | 56 |
+| Pressure | Pressure of the indoor module | Number | 965 |
+| AbsolutePressure | Absolute Pressure of the indoor module | Number | 1021 |
+| temp_trend | trend for temperature of the indoor module | String | stable |
+| pressure_trend | pressure for temperature of the indoor module | String | stable |
+| time_utc | UTC time of the measurement | String | stable |
+| modules | list of modules | dict of modules infos | |
+
+##### Modules
+
+Each Modules contains info depending of its type.
+
+#### Synapses example
+
+``` yml
+  - name: "netatmo-weather"
+    signals:
+      - order: "Température dans la maison"
+    neurons:
+      - netatmo:
+          clientId: "XXX"
+          clientSecret: "XXX"
+          username: "XXX"
+          password: "XXXX"
+          action: "WEATHER_DATA"
+          deviceId: '70:ee:00:00:00:00'
+          say_template: "La température est de {{Temperature}}"
 ```
 
 ## Getting the Netatmo developper id
