@@ -222,6 +222,9 @@ class Netatmo(NeuronModule):
         for key, value in dashboard_data.items():
             result[key] = value 
 
+        if 'battery_percent' in data.keys():
+            result["battery_percent"] = data["battery_percent"]
+
         return result
 
     def _find_room_name_by_id(self, homeData, roomId):
