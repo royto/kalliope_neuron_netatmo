@@ -218,36 +218,9 @@ class Netatmo(NeuronModule):
     def _get_weather_data(self, data):
         result = dict()
         dashboard_data = data["dashboard_data"]
-        result["time_utc"] = dashboard_data["time_utc"]
-        if "Temperature" in data["data_type"]:
-            result["Temperature"] = dashboard_data["Temperature"]
-            result["min_temp"] = dashboard_data["min_temp"]
-            result["max_temp"] = dashboard_data["max_temp"]
-            result["date_min_temp"] = dashboard_data["date_min_temp"]
-            result["date_max_temp"] = dashboard_data["date_max_temp"]
-            result["temp_trend"] = dashboard_data["temp_trend"]
-        if "CO2" in data["data_type"]:
-            result["CO2"] = dashboard_data["CO2"]
-        if "Humidity" in data["data_type"]:
-            result["Humidity"] = dashboard_data["Humidity"]
-        if "Noise" in data["data_type"]:
-            result["Noise"] = dashboard_data["Noise"]
-        if "Pressure" in data["data_type"]:
-            result["Pressure"] = dashboard_data["Pressure"]
-            result["AbsolutePressure"] = dashboard_data["AbsolutePressure"]
-            result["pressure_trend"] = dashboard_data["pressure_trend"]
-        if "Rain" in data["data_type"]:
-            result["Rain"] = dashboard_data["Rain"]
-            result["sum_rain_1"] = dashboard_data["sum_rain_1"]
-            result["sum_rain_24"] = dashboard_data["sum_rain_24"]
-        if "Wind" in data["data_type"]:
-            result["WindStrength"] = dashboard_data["WindStrength"]
-            result["WindAngle"] = dashboard_data["WindAngle"]
-            result["GustStrength"] = dashboard_data["GustStrength"]
-            result["GustAngle"] = dashboard_data["GustAngle"]
-            result["max_wind_str"] = dashboard_data["max_wind_str"]
-            result["max_wind_angle"] = dashboard_data["max_wind_angle"]
-            result["date_max_wind_str"] = dashboard_data["date_max_wind_str"]
+
+        for key, value in dashboard_data.items():
+            result[key] = value 
 
         return result
 
