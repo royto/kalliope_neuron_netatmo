@@ -236,6 +236,18 @@ class Netatmo(NeuronModule):
             result["Pressure"] = dashboard_data["Pressure"]
             result["AbsolutePressure"] = dashboard_data["AbsolutePressure"]
             result["pressure_trend"] = dashboard_data["pressure_trend"]
+        if "Rain" in data["data_type"]:
+            result["Rain"] = dashboard_data["Rain"]
+            result["sum_rain_1"] = dashboard_data["sum_rain_1"]
+            result["sum_rain_24"] = dashboard_data["sum_rain_24"]
+        if "Wind" in data["data_type"]:
+            result["WindStrength"] = dashboard_data["WindStrength"]
+            result["WindAngle"] = dashboard_data["WindAngle"]
+            result["GustStrength"] = dashboard_data["GustStrength"]
+            result["GustAngle"] = dashboard_data["GustAngle"]
+            result["max_wind_str"] = dashboard_data["max_wind_str"]
+            result["max_wind_angle"] = dashboard_data["max_wind_angle"]
+            result["date_max_wind_str"] = dashboard_data["date_max_wind_str"]
 
         return result
 
